@@ -1,16 +1,19 @@
-FROM centos
-
-MAINTAINER mylandmarktech@gmail.com
+FROM centos:latest
 RUN mkdir /opt/tomcat/
 WORKDIR /opt/tomcat
 #RUN curl -O https://downloads.apache.org/tomcat/tomcat-9/v9.0.38/bin/apache-tomcat-9.0.38.tar.gz
-ADD  https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz .
-RUN tar xvfz apache*.tar.gz
-RUN mv apache-tomcat-9.0.40/* /opt/tomcat/.
-RUN yum -y install java
-RUN java -version
+ADD  https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71.tar.gz .
+RUN tar xvfz apache*.tar.gz \ 
+&&  mv apache-tomcat-9.0.71/* /opt/tomcat/. \ 
+&& cd /etc/yum.repos.d/ \
+&& sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
+&& sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* \
+
+&& yum -y install java
 
 WORKDIR /opt/tomcat/webapps
+
+COPY target/*.war /opt/tomcat/webapps
 
 EXPOSE 8080
 
